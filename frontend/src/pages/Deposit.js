@@ -6,25 +6,11 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 function Deposit() {
-    const [credentials] = useContext(CredentialsContext);
-    const [newBalance, setNewBalance] = useState();
-    const [balance, setBalance] = useState();
-    const [amount, setAmount] = useState();
-    const [validTrans, setValidTrans] = useState(false);
+    const [credentials, setCredentials] = useContext(CredentialsContext);
 
+    const [deposit, setDeposit] = useState();
+    const [trans, updateTrans] = useState();
 
-
-    // this one sends newBalance to the backend
-    const connect = (newBalance) => {
-        fetch(`http://localhost:4000/deposit`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Basic ${credentials.email}:${credentials.password}`,
-            },
-            body: JSON.stringify(newBalance),
-        }).then(() => { });
-    };
 
     // fetches info when the user info is changed
     useEffect(() => {
@@ -35,37 +21,36 @@ function Deposit() {
                 Authorization: `Basic ${credentials.email}:${credentials.password}`,
             },
         })
+            // I'm getting user info from the backend
             .then((response) => response.json())
-            .then((balance) => setBalance(balance));
+            .then((trans) => updateTrans(trans));
     }, [credentials.email, credentials.password]);
 
-    console.log(balance);
+
+
+    // this one sends newBalance to the backend
+    const connect = (updateTrans) => {
+        fetch(`http://localhost:4000/deposit`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Basic ${credentials.email}:${credentials.password}`,
+            },
+            body: JSON.stringify(trans),
+        }).then(() => { });
+    };
 
     const handleChange = (e) => {
-        if (Number(e.target.value) <= 0) {
-            alert('You can not deposit negative number');
-            e.target.value = 0;
-            return setValidTrans(false);
-        } else {
-            setValidTrans(true);
-        }
-            setNewBalance(Number(e.target.value) + Number(balance));
-
+        setDeposit(Number(e.target.value));
     }
 
 
-    const setDeposit = (e) => {
+    const submit = (e) => {
         e.preventDefault();
-        // prevent empty tasks
-        // deposit is the amount to be deposited
-        // I thought that this is supossed to be 
-        if (!amount) return;
-        // create a new deposit
-        // SUPER NOT SURE ABOUT THIS ONE
-        const newBalance = { id: uuidv4(), text: amount };
-        setNewBalance(newBalance);
-        connect(newBalance);
-        setValidTrans(false);
+        if (deposit < 0 || !deposit) return;
+        const newTrans = { id: uuidv4(), transType: deposit,  amount: deposit}
+        connect(newTrans);
+        
     };
 
 
@@ -79,14 +64,15 @@ function Deposit() {
                 <Card.Title>Deposit</Card.Title>
                 <h2>{credentials && `Your balance is: ${credentials.balance}`}</h2>
                 <hr />
-                <Form onSubmit={setDeposit}>
+                <Form onSubmit={submit}>
                     <Form.Group className="mb-3" controlId="formBasicName">
                         <Form.Label>Enter the amount</Form.Label>
                         <Form.Control
+                            name="deposit"
                             type="number"
                             text="Amount to be deposited"
                             placeholder="$0"
-                            value={amount}
+                            value={deposit}
                             onChange={(e) => handleChange(e.target.value)} />
                     </Form.Group>
                     <Button variant="dark" type="submit">
