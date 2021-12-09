@@ -45,15 +45,50 @@ const AltUser = mongoose.model('AltUser', altUserSchema);
 /////// SUPER SUPER NOT SURE ABOUT THIS ONE 
 
 const TransactionSchema = new mongoose.Schema({
-  userId: mongoose.Schema.ObjectId,
-  deposit: {
-    id: String,
-    amount: Number
+  userId: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'AltUser',
+    required: true
   },
+  transType: {
+    type: String,
+    required: true
+  },
+  amount: {
+    type: Number,
+    required: true
+  },
+  preBalance: {
+    type: Number,
+    required: true
+  },
+  postBalance: {
+    type: Number,
+    required: true
+  }
 
 });
-
 const Transaction = mongoose.model('transaction', TransactionSchema);
+
+/////////////////////////////////////////////////
+
+const getTrans = async (id) => {
+  const transactions = await Transaction.find({ altUser: id });
+  return transactions;
+}
+
+const addTrans = async ({ userId, transType, balance, amount, newBalance }) => {
+  const newTrans = new Transaction({
+    userId,
+    transType,
+    preBalance: Number(balance),
+    amount: Number(amount),
+    postBalance: Number(newBalance)
+  });
+  const res = await newTrans.save();
+  return res;
+}
+
 
 ///////////////////////////////////////////////////////////
 
@@ -96,46 +131,7 @@ app.post('/login', async (req, res) => {
   });
 });
 
-
-
-///////////////////////////
-///// DEPOSIT //////////////
-
-app.post('/deposit', async (req, res) => {
-
-  // get the username and password with some JavaScript ninja skills :)
-  // 1) grab what in authorization from the request's headers
-  // console.log(req.headers);
-  const { authorization } = req.headers;
-  // console.log(authorization); // (will output this) Basic pip:123456
-  // 2) split the items by the space and store the second part in the variable token
-  const [, token] = authorization.split(' ');
-  // 3) split into two items "username" and "password" based on ":"
-  const [email, password] = token.split(':');
-
-  // grab the balance sent over from the client
-  const balanceUpdated = req.body;
-
-  // find a user based on its unique email
-  const altUser = await AltUser.findOne({ email }).exec();
-  if (!AltUser || altUser.password !== password) {
-    res.status(401);
-    res.json({
-      message: 'Invalid login',
-    });
-    return;
-  }
-
-  // grab a user based on its ID and go grab its balance 
-  const balance = await Transaction.findOne({ userId: altUser._id }).exec();
-  // SUPER NOT SURE ABOUT THIS PART  
-  balance.balance = balanceUpdated;
-  await balance.save();
-  res.json(balanceUpdated);
-
-});
-
-
+/////////////// deposit get route
 app.get('/deposit', async (req, res) => {
   // console.log(req.headers);
   const { authorization } = req.headers;
@@ -149,15 +145,73 @@ app.get('/deposit', async (req, res) => {
     });
     return;
   }
-  // can't destructure if null so we grab it first
-  const balance = await Transaction.findOne({ userId: altUser._id }).exec();
-  // then we make sure it exists
-  if (balance)
-    res.json(balance.balance);
-  // and then we return it
+  try {
+    // can't destructure if null so we grab it first
+    const transactions = await Transaction.findOne({ userId: altUser._id }).exec();
+    // sending transactions to the frontend
+    
+    res.send(transactions);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('server error');
+  }
+}
+);
+//////////////////////////////////////////////
+//////// POST DEPOSIT ////////////////////////
 
 
-});
+app.post('/deposit', async (req, res) => {
+  const { authorization } = req.headers;
+  const [, token] = authorization.split(' ');
+  const [email, password] = token.split(':');
+  const altUser = await AltUser.findOne({ email }).exec();
+  if (!altUser || altUser.password !== password) {
+    res.status(401);
+    res.json({
+      message: 'invalid access',
+    });
+    return;
+  }
+  const { transType, amount } = req.body;
+
+  if (!transType) {
+    return res.status(400).json({ msg: 'No transaction type' });
+
+  }
+  if (amount <= 0) {
+    return res.status(400).json({ msg: "Incorrect amount " });
+  }
+  if (transType !== 'deposit' && transType !== 'withdraw') {
+    return res.status(400).json({ msg: "Non existing transaction type" });
+  }
+
+
+  try {
+    const { balance } = await Transaction.findOne({ userId: altUser._id }).exec();
+    const newBalance = 0;
+    if (transType = "deposit") {
+      if (Number(amount) <= 0) {
+        return res.status(400).json({ msg: 'Your deposit must be greater than zero' });
+      }
+      newBalance = Number(balance) + Number(amount);
+    }
+    else if (transType = "withdraw") {
+      if (Number(amount) > Number(balance)) {
+        return res.status(400).json({ msg: 'Withdrawal must be less than or equal to balance' });
+      }
+      newBalance = Number(balance) - Number(amount);
+    }
+    else return res.status(500).send("server error");
+
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('server error')
+  }
+}
+)
+
+
 
 // app.use('/users', require('./routes/users'));
 db.on('error', console.error.bind(console, 'connection error:'));
