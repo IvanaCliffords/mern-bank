@@ -1,0 +1,61 @@
+* {
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
+}
+
+/* .header-div {
+  height: 8rem;
+  background-color: lavenderblush !important;
+  width: 100% !important;
+  z-index: 6;
+
+} */
+
+.my-nav-link {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-left: 4rem;
+  letter-spacing: 1.2px;
+}
+.my-nav-link:hover {
+  color: #fff !important;
+}
+.my-nav-text {
+  font-size: 1.5rem;
+  margin-top: 1rem;
+  color: black;
+  background-color: inherit;
+}
+.welcome-div {
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  margin: 3rem auto;
+}
+
+.welcome-link {
+  font-size: 2rem;
+  letter-spacing: 2px;
+  display: block;
+  height: 10rem;
+  width: 15rem;
+  text-decoration: none;
+  border: 1px solid grey;
+  border-radius: 3px;
+}
+
+.links-div {
+  display: block;
+  display: flex;
+  flex-direction: column;
+  margin: 2rem auto;
+  align-items: center;
+}
+@media (min-width: 550px) {
+  .links-div {
+    flex-direction: row;
+  }
+  .welcome-link {
+    margin: 3rem;
+  }
+}
