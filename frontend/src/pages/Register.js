@@ -39,13 +39,11 @@ function Register() {
       }),
     })
       .then(handleErrors)
-      .then(() => {
-        setCredentials({
-          name,
-          email,
-          password,
-          balance
-        });
+      .then((res) => {
+        console.log("register", res);
+        setCredentials(
+         res.userInfo
+        );
         alert('Account successfully created!')
         localStorage.setItem(credendentials, JSON.stringify(credendentials));
         navigate('/');

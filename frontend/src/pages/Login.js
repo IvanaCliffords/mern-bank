@@ -17,10 +17,6 @@ function Login() {
   const navigate = useNavigate();
   const [credentials, setCredentials] = useContext(CredentialsContext);
 
-
-
-
-
   const login = (e) => {
 
     e.preventDefault();
@@ -39,12 +35,10 @@ function Login() {
       }),
     })
       .then(handleErrors)
-      .then(() => {
-        setCredentials({
-          email,
-          password
-
-        });
+      .then((res) => {
+        console.log(res);
+        
+        setCredentials(res.userInfo);
         alert('You successfully logged in!')
         navigate('/');
       })

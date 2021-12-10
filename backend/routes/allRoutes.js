@@ -21,10 +21,11 @@ router.post('/register', async (req, res) => {
         return;
     }
 
-    await AltUser.create({ name, email, password, balance: 0 });
+    const newUser = await AltUser.create({ name, email, password, balance: 0 });
 
     res.json({
         message: 'success',
+        userInfo: newUser
     });
 });
 
@@ -40,10 +41,10 @@ router.post('/login', async (req, res) => {
         });
         return;
     }
-    await AltUser.create({ email, password });
 
     res.json({
         message: 'success',
+        userInfo: altUser
     });
 });
 
@@ -148,3 +149,5 @@ router.post('/deposit', async (req, res) => {
     }
 }
 )
+
+module.exports = router;
