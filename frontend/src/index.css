@@ -40,8 +40,12 @@
   height: 10rem;
   width: 15rem;
   text-decoration: none;
-  border: 1px solid grey;
-  border-radius: 3px;
+  border-radius: 4px;
+  background-color: #fff;
+}
+.welcome-link:hover {
+  transform: translateY(-0.2%) !important;
+  box-shadow: 0 .3rem .7rem rgba(0, 0, 0, 0.2) !important;
 }
 
 .links-div {
@@ -49,7 +53,13 @@
   display: flex;
   flex-direction: column;
   margin: 2rem auto;
+  height: 50vh;
   align-items: center;
+  background-color: rgba(0, 0, 0, .07);
+  border-radius: 7px;
+  align-items: center;
+
+
 }
 @media (min-width: 550px) {
   .links-div {
@@ -58,4 +68,20 @@
   .welcome-link {
     margin: 3rem;
   }
+}
+.link {
+  
+  margin-top: 2.2rem;
+}
+
+.welcome-h1 {
+  letter-spacing: 1px;
+}
+
+
+.welcome-h4 {
+  margin-top: 1rem;
+  opacity: .8;
+  font-size: 1.2rem;
+
 }
