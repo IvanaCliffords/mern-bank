@@ -18,11 +18,11 @@ const TransactionSchema = new mongoose.Schema({
     },
     preBalance: {
         type: Number,
-        required: true
+        required: false
     },
     postBalance: {
         type: Number,
-        required: true
+        required: false
     }
 
 });
