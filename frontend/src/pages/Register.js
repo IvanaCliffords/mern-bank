@@ -42,7 +42,7 @@ function Register() {
       .then((res) => {
         console.log("register", res);
         setCredentials(
-         res.userInfo
+          res.userInfo
         );
         alert('Account successfully created!')
         localStorage.setItem(credendentials, JSON.stringify(credendentials));
