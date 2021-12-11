@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 
 import { CredentialsContext } from '../App';
-import Deposit from './Deposit';
+// import Deposit from './Deposit';
 
 
 function Welcome() {
