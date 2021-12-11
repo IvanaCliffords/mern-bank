@@ -1,56 +1,76 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { CredentialsContext } from '../App';
 import { Card, Form, Button } from 'react-bootstrap';
-import { v4 as uuidv4 } from 'uuid';
+import { useNavigate } from 'react-router-dom';
+// import { v4 as uuidv4 } from 'uuid';
 
 
 
 function Deposit() {
     const [credentials, setCredentials] = useContext(CredentialsContext);
-
     const [deposit, setDeposit] = useState();
     const [trans, updateTrans] = useState();
+    const navigate = useNavigate();
+
 
 
     // fetches info when the user info is changed
     useEffect(() => {
-        fetch(`http://localhost:4000/deposit`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Basic ${credentials.email}:${credentials.password}`,
-            },
-        })
-            // I'm getting user info from the backend
-            .then((response) => response.json())
-            .then((trans) => updateTrans(trans));
-    }, [credentials.email, credentials.password]);
+        if (credentials) {
+            fetch(`http://localhost:4000/transactions`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Basic ${credentials.email}:${credentials.password}`,
+                },
+            })
+                // I'm getting user info from the backend
+                .then((response) => response.json())
+                .then((trans) => updateTrans(trans));
+        }
+    }, [credentials]);
 
 
 
     // this one sends newBalance to the backend
-    const connect = (updateTrans) => {
-        fetch(`http://localhost:4000/deposit`, {
+    const connect = (newTrans) => {
+        fetch(`http://localhost:4000/transactions`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Basic ${credentials.email}:${credentials.password}`,
             },
-            body: JSON.stringify(trans),
-        }).then(() => { });
+            body: JSON.stringify(newTrans),
+        })
+         
+            .then(response => {
+                console.log("what i'm sending to the backend: ", response)
+                return response.json();
+
+            })
+            .then((res) => {
+                console.log("im deposiiting it", res);
+                setCredentials(res.userInfo);
+            })
+            .then(() => {
+                navigate('/');
+            })
+            .catch((error) => {
+                console.error(error);
+            })
     };
 
-    const handleChange = (e) => {
-        setDeposit(Number(e.target.value));
-    }
 
 
     const submit = (e) => {
         e.preventDefault();
-        if (deposit < 0 || !deposit) return;
-        const newTrans = { id: uuidv4(), transType: deposit,  amount: deposit}
+        if (deposit < 0 || !deposit) {
+            alert("Please enter a valid amount!");
+            return;
+        }
+        const newTrans = { transType: "deposit", amount: deposit };
         connect(newTrans);
-        
+        // history.push('/');
     };
 
 
@@ -73,7 +93,7 @@ function Deposit() {
                             text="Amount to be deposited"
                             placeholder="$0"
                             value={deposit}
-                            onChange={(e) => handleChange(e.target.value)} />
+                            onChange={(e) => setDeposit(e.target.value)} />
                     </Form.Group>
                     <Button variant="dark" type="submit">
                         Add Deposit

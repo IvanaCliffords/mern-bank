@@ -16,7 +16,7 @@ router.post('/register', async (req, res) => {
     if (altUser) {
         res.status(500);
         res.json({
-            message: 'user already exists',
+            message: 'User already exists',
         });
         return;
     }
@@ -53,7 +53,7 @@ router.post('/login', async (req, res) => {
 /////////////// DEPOSIT GET ROUTE ///////////////////////////
 
 
-router.get('/deposit', async (req, res) => {
+router.get('/transactions', async (req, res) => {
     // console.log(req.headers);
     const { authorization } = req.headers;
     const [, token] = authorization.split(' ');
@@ -62,7 +62,7 @@ router.get('/deposit', async (req, res) => {
     if (!altUser || altUser.password !== password) {
         res.status(401);
         res.json({
-            message: 'invalid access',
+            message: 'Invalid access',
         });
         return;
     }
@@ -73,7 +73,7 @@ router.get('/deposit', async (req, res) => {
         res.send(transactions);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('server error');
+        res.status(500).send('Server error: not getitng deposit info from the server');
     }
 }
 );
@@ -82,7 +82,7 @@ router.get('/deposit', async (req, res) => {
 ////////  DEPOSIT POST ROUTE  ////////////////////////
 
 
-router.post('/deposit', async (req, res) => {
+router.post('/transactions', async (req, res) => {
     const { authorization } = req.headers;
     const [, token] = authorization.split(' ');
     const [email, password] = token.split(':');
@@ -95,57 +95,60 @@ router.post('/deposit', async (req, res) => {
         return;
     }
     const { transType, amount } = req.body;
+    console.count();
+    console.log(req.body);
 
     if (!transType) {
-        return res.status(400).json({ msg: 'No transaction type' });
-
+        res.status(400).json({ msg: 'No transaction type' });
     }
     if (amount <= 0) {
-        return res.status(400).json({ msg: "Incorrect amount " });
+        res.status(400).json({ msg: "Incorrect amount " });
     }
     if (transType !== 'deposit' && transType !== 'withdraw') {
-        return res.status(400).json({ msg: "Non existing transaction type" });
+        res.status(400).json({ msg: "Non existing transaction type" });
     }
 
 
 
-
+    console.count();
     try {
-        const { balance } = await Transaction.findOne({ userId: altUser._id }).exec();
-        const newBalance = 0;
-        if (transType = "deposit") {
-            if (Number(amount) <= 0) {
-                return res.status(400).json({ msg: 'Your deposit must be greater than zero' });
-            }
+        const { balance } = altUser;
+        let newBalance = 0;
+        if (transType === "deposit") {
             newBalance = Number(balance) + Number(amount);
         }
 
 
-        else if (transType = "withdraw") {
+        else if (transType === "withdraw") {
             if (Number(amount) > Number(balance)) {
-                return res.status(400).json({ msg: 'Withdrawal must be less than or equal to balance' });
+                res.status(400).json({ msg: 'Withdrawal must be less than or equal to balance' });
             }
             newBalance = Number(balance) - Number(amount);
         }
+        console.count();
+        console.log(newBalance);
+        const updatedUser = await AltUser.findOneAndUpdate({ email }, { balance: newBalance });
+        console.count();
+        console.log(updatedUser);
 
 
 
-        // const addTrans = async ({ userId, transType, balance, amount, newBalance }) => {
-        //   const newTrans = new Transaction({
-        //     userId,
-        //     transType,
-        //     preBalance: Number(balance),
-        //     amount: Number(amount),
-        //     postBalance: Number(newBalance)
-        //   });
-        //   const res = await newTrans.save();
-        //   return res;
-        // }
+        const newTrans = new Transaction({
+            userId: altUser._id,
+            transType,
+            amount: Number(amount),
+        });
+        const createdTransaction = await newTrans.save();
+        console.count();
+        console.log(createdTransaction);
+        res.status(201).json({ message: "Transaction added and user's balance updated!", userInfo: updatedUser });
+
+
     }
 
     catch (err) {
         console.error(err.message);
-        res.status(500).send('server error')
+        res.status(500).send('Server error: deposit is not working')
     }
 }
 )

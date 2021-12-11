@@ -20,8 +20,6 @@ function Login() {
   const login = (e) => {
 
     e.preventDefault();
-
-
     fetch(`http://localhost:4000/login`, {
       method: 'POST',
       headers: {
@@ -37,9 +35,11 @@ function Login() {
       .then(handleErrors)
       .then((res) => {
         console.log(res);
-        
+        // localStorage.setItem('userDataKey', JSON.stringify(res))
+        // not sure about this one
         setCredentials(res.userInfo);
         alert('You successfully logged in!')
+        
         navigate('/');
       })
       .catch((error) => {

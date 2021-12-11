@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Welcome from './pages/Welcome';
@@ -13,7 +13,15 @@ export const CredentialsContext = React.createContext();
 function App() {
   // tmp credendentials to avoid refresh losing credential's state
   // TODO: fix this with localStorage - https://www.freecodecamp.org/news/how-to-persist-a-logged-in-user-in-react/
-  const credentialsState = useState();
+  const credentialsState  = useState();
+
+  // useEffect(() => {
+  //   const userFromStorage = localStorage.getItem("userDataKey");
+  //   if(userFromStorage) {
+  //     credentialsState(JSON.parse(userFromStorage));
+  //   }
+  
+  // }, [])
 
 
   return (

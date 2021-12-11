@@ -15,14 +15,6 @@ const TransactionSchema = new mongoose.Schema({
     amount: {
         type: Number,
         required: true
-    },
-    preBalance: {
-        type: Number,
-        required: true
-    },
-    postBalance: {
-        type: Number,
-        required: true
     }
 
 });

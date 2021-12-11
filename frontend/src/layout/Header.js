@@ -1,12 +1,14 @@
 import React, { useContext } from 'react';
 import { Navbar, Container, Nav } from 'react-bootstrap';
 import { CredentialsContext } from '../App';
+import { Link } from 'react-router-dom';
 
 
 function Header() {
     const [credentials, setCredentials] = useContext(CredentialsContext);
     const handleLogout = () => {
         setCredentials(null);
+        localStorage.removeItem('userDataKey');
     };
 
     const isUserLoggedIn = () => {
@@ -24,40 +26,42 @@ function Header() {
 
     const loggedOutNav = (
         <>
-
         </>
     )
 
 
+
     return (
         // <div className="header-div">
-            <Navbar bg="secondary" expand="lg"  className="my-navbar">
-                <Container>
-                    <Navbar.Brand href="/">
+        <Navbar bg="secondary" expand="lg" className="my-navbar">
+            <Container>
+                <Navbar.Brand>
+                    <Link to="/">
                         <img
                             alt="Bank logo"
                             src="/bank-img.png"
                             width="55"
                             height="50"
-                            className="d-inline-block align-top"
-
-                        />
-                    </Navbar.Brand>
-                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                    <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className="me-auto">
-                            {isUserLoggedIn()}
-                        </Nav>
-
-                        <Navbar.Text>
-                            {credentials &&
-                                <p className="my-nav-text">Logged in as <strong>{credentials.email}</strong></p>}
-                        </Navbar.Text>
+                            className="d-inline-block align-top" />
+                    </Link>
 
 
-                    </Navbar.Collapse>
-                </Container>
-            </Navbar>
+                </Navbar.Brand>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav">
+                    <Nav className="me-auto">
+                        {isUserLoggedIn()}
+                    </Nav>
+
+                    <Navbar.Text>
+                        {credentials &&
+                            <p className="my-nav-text">Logged in as <strong>{credentials.email}</strong></p>}
+                    </Navbar.Text>
+
+
+                </Navbar.Collapse>
+            </Container>
+        </Navbar>
         // </div>
     );
 }
