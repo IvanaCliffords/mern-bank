@@ -8,6 +8,7 @@ const routes = require('./routes/allRoutes')
 const path = require('path');
 
 // set up express
+// test
 const app = express();
 app.use(express.json());
 app.use(cors());
