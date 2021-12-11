@@ -35,8 +35,9 @@ function Login() {
       .then(handleErrors)
       .then((res) => {
         console.log(res);
-        // localStorage.setItem('userDataKey', JSON.stringify(res))
-        // not sure about this one
+        // localStorage.setItem('userDataKey', JSON.stringify(res.userInfo));
+        // localStorage.setItem('testKey', "test value");
+        // // not sure about this one
         setCredentials(res.userInfo);
         alert('You successfully logged in!')
         

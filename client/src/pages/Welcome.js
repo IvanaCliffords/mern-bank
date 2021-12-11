@@ -15,7 +15,7 @@
         <h1 className="welcome-h1">{!credentials && `Welcome to the badest bank`}</h1>
 
         <h2 className="welcome-h2">{credentials && `Your balance is $${credentials.balance}`}</h2>
-        <h2 className="welcome-h2">{!credentials && `You probably don't want to do business with us.`}</h2>
+        <h2 className="welcome-h2">{!credentials && `You probably don't want to do business with.`}</h2>
 
 
         {!credentials && <h4 className="welcome-h4">Please start by creating an account or logging in.</h4>}

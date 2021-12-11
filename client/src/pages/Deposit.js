@@ -2,7 +2,9 @@ import React, { useContext, useState, useEffect } from 'react';
 import { CredentialsContext } from '../App';
 import { Card, Form, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { handleErrors } from '../utils/handleErrors';
 // import { v4 as uuidv4 } from 'uuid';
+
 
 
 
@@ -11,6 +13,7 @@ function Deposit() {
     const [deposit, setDeposit] = useState("$0");
     const [trans, updateTrans] = useState({});
     const navigate = useNavigate();
+
 
 
 
@@ -32,6 +35,9 @@ function Deposit() {
 
 
 
+
+
+
     // this one sends newBalance to the backend
     const connect = (newTrans) => {
         fetch(`http://localhost:4000/transactions`, {
@@ -42,7 +48,6 @@ function Deposit() {
             },
             body: JSON.stringify(newTrans),
         })
-         
             .then(response => {
                 console.log("what i'm sending to the backend: ", response)
                 return response.json();
@@ -70,7 +75,6 @@ function Deposit() {
         }
         const newTrans = { transType: "deposit", amount: deposit };
         connect(newTrans);
-        // history.push('/');
     };
 
 

@@ -3,13 +3,7 @@
   font-weight: 500;
 }
 
-/* .header-div {
-  height: 8rem;
-  background-color: lavenderblush !important;
-  width: 100% !important;
-  z-index: 6;
 
-} */
 
 .my-nav-link {
   font-size: 1.4rem;
@@ -23,9 +17,11 @@
 .my-nav-text {
   font-size: 1.5rem;
   margin-top: 1rem;
-  color: black;
+  color: #fff;
   background-color: inherit;
+  font-weight: 100;
 }
+
 .welcome-div {
   display: flex;
   flex-direction: column;

@@ -32,8 +32,8 @@ function Header() {
 
 
     return (
-        // <div className="header-div">
-        <Navbar bg="secondary" expand="lg" className="my-navbar">
+        
+        <Navbar bg="dark" expand="lg" className="navbar navbar-expand-lg navbar-dark bg-dark my-navbar">
             <Container>
                 <Navbar.Brand>
                     <Link to="/">
@@ -42,6 +42,7 @@ function Header() {
                             src="/bank-img.png"
                             width="55"
                             height="50"
+                            opacity=".3"
                             className="d-inline-block align-top" />
                     </Link>
 
@@ -62,7 +63,6 @@ function Header() {
                 </Navbar.Collapse>
             </Container>
         </Navbar>
-        // </div>
     );
 }
 export default Header;
