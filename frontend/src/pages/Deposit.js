@@ -8,8 +8,8 @@ import { useNavigate } from 'react-router-dom';
 
 function Deposit() {
     const [credentials, setCredentials] = useContext(CredentialsContext);
-    const [deposit, setDeposit] = useState();
-    const [trans, updateTrans] = useState();
+    const [deposit, setDeposit] = useState("$0");
+    const [trans, updateTrans] = useState({});
     const navigate = useNavigate();
 
 

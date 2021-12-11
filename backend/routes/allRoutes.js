@@ -127,7 +127,8 @@ router.post('/transactions', async (req, res) => {
         }
         console.count();
         console.log(newBalance);
-        const updatedUser = await AltUser.findOneAndUpdate({ email }, { balance: newBalance });
+        await AltUser.findOneAndUpdate({ email }, { balance: newBalance });
+        const updatedUser = await AltUser.findOne({email})
         console.count();
         console.log(updatedUser);
 

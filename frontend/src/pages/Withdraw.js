@@ -8,14 +8,15 @@ import { useNavigate } from 'react-router-dom';
 
 function Withdraw() {
     const [credentials, setCredentials] = useContext(CredentialsContext);
-    const [withdrawal, setwithdrawal] = useState();
-    const [trans, updateTrans] = useState();
+    const [withdrawal, setwithdrawal] = useState("$0");
+    const [trans, updateTrans] = useState({});
     const navigate = useNavigate();
 
 
 
     // fetches info when the user info is changed
     useEffect(() => {
+        if(credentials){
         fetch(`http://localhost:4000/transactions`, {
             method: 'GET',
             headers: {
@@ -26,7 +27,8 @@ function Withdraw() {
             // I'm getting user info from the backend
             .then((response) => response.json())
             .then((trans) => updateTrans(trans));
-    }, [credentials.email, credentials.password]);
+    }
+    }, [credentials]);
 
 
 
@@ -45,8 +47,9 @@ function Withdraw() {
             .then((res) => {
                 console.log("im deposiitng it", res);
                 setCredentials(res.userInfo);
-                navigate('/');
+            
             })
+            .then( () =>  navigate('/'))
             .catch((error) => {
                 console.error(error);
             })
@@ -62,7 +65,6 @@ function Withdraw() {
         }
         const newTrans = { transType: "withdraw", amount: withdrawal };
         connect(newTrans);
-        navigate('/');
     };
 
     return (
