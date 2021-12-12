@@ -20,13 +20,19 @@ router.post('/register', async (req, res) => {
         });
         return;
     }
+    try {
+        const newUser = await AltUser.create({ name, email, password, balance: 0 });
+        res.json({
+            message: 'success',
+            userInfo: newUser
+        });
 
-    const newUser = await AltUser.create({ name, email, password, balance: 0 });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error: You did not register');
 
-    res.json({
-        message: 'success',
-        userInfo: newUser
-    });
+    }
+
 });
 
 /////////// LOGIN POST ROUTE  /////////////////////////
@@ -41,11 +47,19 @@ router.post('/login', async (req, res) => {
         });
         return;
     }
+    try {
+        res.json({
+            message: 'success',
+            userInfo: altUser
+        });
 
-    res.json({
-        message: 'success',
-        userInfo: altUser
-    });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error: You did not log in');
+
+    }
+
+
 });
 
 
@@ -73,7 +87,7 @@ router.get('/transactions', async (req, res) => {
         res.send(transactions);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server error: not getitng deposit info from the server');
+        res.status(500).send('Server error: not getitng transaction info from the server');
     }
 }
 );
@@ -87,6 +101,9 @@ router.post('/transactions', async (req, res) => {
     const [, token] = authorization.split(' ');
     const [email, password] = token.split(':');
     const altUser = await AltUser.findOne({ email }).exec();
+
+
+
     if (!altUser || altUser.password !== password) {
         res.status(401);
         res.json({
@@ -94,24 +111,27 @@ router.post('/transactions', async (req, res) => {
         });
         return;
     }
-    const { transType, amount } = req.body;
-    console.count();
-    console.log(req.body);
-
-    if (!transType) {
-        res.status(400).json({ msg: 'No transaction type' });
-    }
-    if (amount <= 0) {
-        res.status(400).json({ msg: "Incorrect amount " });
-    }
-    if (transType !== 'deposit' && transType !== 'withdraw') {
-        res.status(400).json({ msg: "Non existing transaction type" });
-    }
 
 
-
-    console.count();
     try {
+        const { transType, amount } = req.body;
+        console.count();
+        console.log(req.body);
+
+        if (!transType) {
+            res.status(400).json({ msg: 'No transaction type' });
+        }
+        if (amount < 0) {
+            res.status(400).json({ msg: "Incorrect amount " });
+        }
+        if (transType !== 'deposit' && transType !== 'withdraw') {
+            res.status(400).json({ msg: "Non existing transaction type" });
+        }
+
+
+
+        console.count();
+
         const { balance } = altUser;
         let newBalance = 0;
         if (transType === "deposit") {
@@ -128,7 +148,7 @@ router.post('/transactions', async (req, res) => {
         console.count();
         console.log(newBalance);
         await AltUser.findOneAndUpdate({ email }, { balance: newBalance });
-        const updatedUser = await AltUser.findOne({email})
+        const updatedUser = await AltUser.findOne({ email })
         console.count();
         console.log(updatedUser);
 
