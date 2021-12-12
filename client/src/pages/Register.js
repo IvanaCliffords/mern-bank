@@ -27,8 +27,8 @@ function Register() {
   // const onSubmit = ( data ) => alert(JSON.stringify(data)); 
 
 
-  const createAccount = (e) => {
-    e.preventDefault();
+  const createAccount = () => {
+
     fetch(`http://localhost:4000/register`, {
       method: 'POST',
       headers: {
@@ -55,6 +55,18 @@ function Register() {
       });
   };
 
+  const submit = (e) => {
+    e.preventDefault();
+    if(!name || !email || !password) {
+      alert("All fields are required!");
+  
+    }
+    else if(password.length < 8){
+      alert("Password needs to be at least eight characters long!");
+    }
+    else 
+    createAccount();
+  }
 
   return (
 
@@ -65,7 +77,7 @@ function Register() {
         {<p>Please fill in the following information</p>}
         <hr />
         <>
-          <Form onSubmit={createAccount}>
+          <Form onSubmit={submit}>
             {/* <Form onSubmit={handleSubmit(onSubmit)}> */}
             <Form.Group className="mb-3" controlId="formBasicName">
               <Form.Label>Name</Form.Label>

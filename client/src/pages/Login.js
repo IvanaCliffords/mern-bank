@@ -17,9 +17,8 @@ function Login() {
   const navigate = useNavigate();
   const [credentials, setCredentials] = useContext(CredentialsContext);
 
-  const login = (e) => {
+  const login = () => {
 
-    e.preventDefault();
     fetch(`http://localhost:4000/login`, {
       method: 'POST',
       headers: {
@@ -40,13 +39,22 @@ function Login() {
         // // not sure about this one
         setCredentials(res.userInfo);
         alert('You successfully logged in!')
-        
+
         navigate('/');
       })
       .catch((error) => {
         setError(error.message);
       });
   };
+
+  const submit = (e) => {
+    e.preventDefault();
+    if (!email || !password) {
+      alert("All fields are required!");
+      return;
+    }
+    login();
+}
 
   return (
 
@@ -58,7 +66,7 @@ function Login() {
         <hr />
         <>
           <Form
-            onSubmit={login}>
+            onSubmit={submit}>
 
             <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Label>Email address</Form.Label>
@@ -74,7 +82,7 @@ function Login() {
               <Form.Control
                 type="password"
                 placeholder="Enter your password"
-                value={password} 
+                value={password}
                 onChange={event => setPassword(event.currentTarget.value)} />
             </Form.Group>
 

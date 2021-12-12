@@ -56,6 +56,7 @@ function Deposit() {
             .then((res) => {
                 console.log("im deposiiting it", res);
                 setCredentials(res.userInfo);
+                alert("You successfully added a deposit!")
             })
             .then(() => {
                 navigate('/');
@@ -69,7 +70,7 @@ function Deposit() {
 
     const submit = (e) => {
         e.preventDefault();
-        if (deposit < 0 || !deposit) {
+        if (deposit <= 0 || !deposit) {
             alert("Please enter a valid amount!");
             return;
         }

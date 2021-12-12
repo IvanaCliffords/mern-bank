@@ -16,18 +16,18 @@ function Withdraw() {
 
     // fetches info when the user info is changed
     useEffect(() => {
-        if(credentials){
-        fetch(`http://localhost:4000/transactions`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Basic ${credentials.email}:${credentials.password}`,
-            },
-        })
-            // I'm getting user info from the backend
-            .then((response) => response.json())
-            .then((trans) => updateTrans(trans));
-    }
+        if (credentials) {
+            fetch(`http://localhost:4000/transactions`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Basic ${credentials.email}:${credentials.password}`,
+                },
+            })
+                // I'm getting user info from the backend
+                .then((response) => response.json())
+                .then((trans) => updateTrans(trans));
+        }
     }, [credentials]);
 
 
@@ -47,9 +47,9 @@ function Withdraw() {
             .then((res) => {
                 console.log("im deposiitng it", res);
                 setCredentials(res.userInfo);
-            
+
             })
-            .then( () =>  navigate('/'))
+            .then(() => navigate('/'))
             .catch((error) => {
                 console.error(error);
             })
@@ -63,8 +63,15 @@ function Withdraw() {
             alert("Please enter a valid amount!");
             return;
         }
-        const newTrans = { transType: "withdraw", amount: withdrawal };
-        connect(newTrans);
+        if (withdrawal > credentials.balance) {
+            alert("The amount you withdraw can not be greater than your balance!")
+            return;
+        } else {
+            const newTrans = { transType: "withdraw", amount: withdrawal };
+            connect(newTrans);
+        }
+
+
     };
 
     return (
@@ -79,7 +86,7 @@ function Withdraw() {
                     <Form.Group className="mb-3" controlId="formBasicName">
                         <Form.Label>Enter the amount</Form.Label>
                         <Form.Control
-                            name="deposit"
+                            name="withdrawal"
                             type="number"
                             text="Amount to be deposited"
                             placeholder="$0"
